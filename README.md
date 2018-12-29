@@ -1,3 +1,5 @@
+![Travis](https://travis-ci.org/krzysztoflichota/jooq_sample.svg?branch=master)
+
 This is sample app using JOOQ framework
 
 You need JDK11 to run this app

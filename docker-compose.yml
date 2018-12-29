@@ -1,0 +1,11 @@
+version: '3'
+services:
+  jooq-pg-db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: JOOQ_DB
+      POSTGRES_USER: JOOQ_APP
+      POSTGRES_PASSWORD: a
+    ports:
+      - "6000:5432"

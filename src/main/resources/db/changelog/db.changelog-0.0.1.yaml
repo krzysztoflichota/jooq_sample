@@ -1,0 +1,266 @@
+databaseChangeLog:
+  - logicalFilePath: classpath:/db/changelog/db.changelog-0.0.1.yaml
+  - changeSet:
+     id: 0.0.1
+     author: krzysztof.lichota
+     changes:
+       - createTable:
+           tableName: parameter
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 constraints:
+                   primaryKey: true
+                   primaryKeyName: pk_parameter
+                   nullable: false
+             - column:
+                 name: code
+                 type: varchar(255)
+                 constraints:
+                   nullable: false
+             - column:
+                  name: int_value
+                  type: bigint
+             - column:
+                 name: decimal_value
+                 type: currency
+
+       - createTable:
+           tableName: proposal
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 constraints:
+                   primaryKey: true
+                   primaryKeyName: pk_proposal
+                   nullable: false
+             - column:
+                 name: status
+                 type: varchar(255)
+                 constraints:
+                   nullable: false
+             - column:
+                 name: term
+                 type: bigint
+                 constraints:
+                   nullable: false
+             - column:
+                 name: amount
+                 type: currency
+                 constraints:
+                   nullable: false
+             - column:
+                 name: created_at
+                 type: datetime
+                 constraints:
+                   nullable: false
+       - createSequence:
+           incrementBy: 1
+           sequenceName: proposal_seq
+           startValue: 1
+
+       - createTable:
+           tableName: loan
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 constraints:
+                   primaryKey: true
+                   primaryKeyName: pk_loan
+                   nullable: false
+             - column:
+                 name: status
+                 type: varchar(255)
+                 constraints:
+                   nullable: false
+             - column:
+                 name: created_at
+                 type: datetime
+                 constraints:
+                   nullable: false
+             - column:
+                 name: date_from
+                 type: date
+                 constraints:
+                   nullable: false
+             - column:
+                 name: date_to
+                 type: date
+                 constraints:
+                   nullable: false
+             - column:
+                 name: amount
+                 type: currency
+                 constraints:
+                   nullable: false
+             - column:
+                 name: cost
+                 type: currency
+                 constraints:
+                   nullable: false
+             - column:
+                 name: proposal_id
+                 type: bigint
+                 constraints:
+                   foreignKeyName: fk_loan_proposal
+                   references: proposal(id)
+       - createSequence:
+           incrementBy: 1
+           sequenceName: loan_seq
+           startValue: 1
+
+
+       - createTable:
+           tableName: loan_extension
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 constraints:
+                   primaryKey: true
+                   primaryKeyName: pk_loan_extension
+                   nullable: false
+             - column:
+                 name: extended_to
+                 type: date
+                 constraints:
+                   nullable: false
+             - column:
+                 name: created_at
+                 type: datetime
+                 constraints:
+                   nullable: false
+             - column:
+                 name: loan_id
+                 type: bigint
+                 constraints:
+                   foreignKeyName: fk_loan_extension_loan
+                   references: loan(id)
+       - createSequence:
+           incrementBy: 1
+           sequenceName: loan_extension_seq
+           startValue: 1
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 1
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PROPOSAL_MIN_TERM
+             - column:
+                 name: int_value
+                 type: bigint
+                 value: 30
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 2
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PROPOSAL_MAX_TERM
+             - column:
+                 name: int_value
+                 type: bigint
+                 value: 90
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 3
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PROPOSAL_MIN_AMOUNT
+             - column:
+                 name: decimal_value
+                 type: currency
+                 value: 1000
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 4
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PROPOSAL_MAX_AMOUNT
+             - column:
+                 name: decimal_value
+                 type: currency
+                 value: 20000
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 5
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PROPOSAL_MAX_AMOUNT_INVALID_MIN_APPLY_TIME
+             - column:
+                 name: int_value
+                 type: bigint
+                 value: 0
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 6
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PROPOSAL_MAX_AMOUNT_INVALID_MAX_APPLY_TIME
+             - column:
+                 name: int_value
+                 type: bigint
+                 value: 6
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 7
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: PRINCIPAL_MULTIPLIER
+             - column:
+                 name: decimal_value
+                 type: currency
+                 value: 0.1
+           tableName: parameter
+       - insert:
+           columns:
+             - column:
+                 name: id
+                 type: bigint
+                 value: 8
+             - column:
+                 name: code
+                 type: varchar(255)
+                 value: DAYS_TO_EXTEND
+             - column:
+                 name: int_value
+                 type: bigint
+                 value: 30
+           tableName: parameter
+

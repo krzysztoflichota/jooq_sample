@@ -1,0 +1,34 @@
+sourceSets {
+    integrationTest {
+        groovy.srcDir 'src/integrationTest/groovy'
+        resources.srcDir 'src/integrationTest/resources'
+        compileClasspath += main.compileClasspath + test.compileClasspath
+        runtimeClasspath += main.runtimeClasspath + test.runtimeClasspath + configurations.testCompile + configurations.testRuntime
+    }
+}
+
+task integrationTest(type: Test) {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = 'Runs the integration tests.'
+
+    maxHeapSize = '1024m'
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    mustRunAfter tasks.test
+}
+
+check.dependsOn integrationTest
+
+gradle.projectsEvaluated {
+    def quickTasks = []
+
+    rootProject.allprojects.each { project ->
+        quickTasks.addAll(project.tasks.findAll { it.name == 'test' })
+    }
+
+    quickTasks.each { task ->
+        project.tasks.integrationTest.mustRunAfter task
+    }
+}

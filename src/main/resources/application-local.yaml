@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6000/JOOQ_DB
+    username: JOOQ_APP
+    password: a

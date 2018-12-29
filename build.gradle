@@ -1,0 +1,89 @@
+import groovy.xml.MarkupBuilder
+import org.jooq.codegen.GenerationTool
+
+buildscript {
+    ext {
+        springBootVersion = '2.1.1.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+//      JOOQ codegen dependencies
+        classpath('javax.xml.bind:jaxb-api:2.3.1')
+        classpath('com.sun.xml.bind:jaxb-impl:2.3.1')
+        classpath('com.sun.istack:istack-commons-runtime:3.0.7')
+        classpath('org.jooq:jooq-codegen:3.11.8')
+        classpath('org.postgresql:postgresql:42.2.5')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply from: "${rootDir}/integration-test-plugin.gradle"
+
+group = 'com.klichota'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-jooq')
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.liquibase:liquibase-core')
+
+    runtimeOnly('org.springframework.boot:spring-boot-devtools')
+    runtimeOnly('org.postgresql:postgresql')
+    compileOnly('org.projectlombok:lombok')
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.spockframework:spock-spring:1.2-groovy-2.5')
+    testRuntimeOnly('com.h2database:h2')
+}
+
+task generateJooqClasses {
+    doLast {
+        logger.info('[JOOQ] Generating JOOQ classes')
+        def writer = new StringWriter()
+        new MarkupBuilder(writer)
+                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd') {
+            jdbc() {
+                driver('org.postgresql.Driver')
+                url('jdbc:postgresql://localhost:6000/JOOQ_DB')
+                user('JOOQ_APP')
+                password('a')
+            }
+            generator() {
+                database() {
+                    inputSchema('public')
+                }
+
+                generate([:]) {
+                    pojos true
+                    daos true
+                }
+                target() {
+                    packageName('com.klichota.jooqdemo.boundary.perstitence')
+                    directory("${projectDir}/src/main/java")
+                }
+            }
+        }
+        GenerationTool.generate(writer.toString())
+        logger.info('[JOOQ] JOOQ generation completed')
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += file('src/integrationTest/groovy')
+        testResourceDirs += file('src/integrationTest/resources')
+    }
+}

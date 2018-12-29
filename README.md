@@ -6,3 +6,4 @@ Too start:
 
 1. Run 'docker-compose up -d' for dev enviroment (db)
 2. Run 'gradlew bootRun' to start app
+3. Go to http://localhost:8080/swagger-ui.html to test API

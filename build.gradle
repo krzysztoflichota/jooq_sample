@@ -23,6 +23,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'groovy'
+apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply from: "${rootDir}/integration-test-plugin.gradle"
@@ -89,3 +90,16 @@ idea {
         testResourceDirs += file('src/integrationTest/resources')
     }
 }
+
+jacoco {
+    toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: '**/boundary/perstitence/**')
+        })
+    }
+}
+check.finalizedBy jacocoTestReport
